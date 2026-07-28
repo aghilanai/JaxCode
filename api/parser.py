@@ -32,7 +32,7 @@ def parse_notebook_template(filepath: str) -> dict:
                 
                 # Check for the implementation placeholder
                 if "# ✏️ YOUR IMPLEMENTATION HERE" in source_str:
-                    initial_code = "import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nimport math\n\n" + source_str
+                    initial_code = "import jax\nimport jax.numpy as jnp\nfrom flax import nnx\nimport optax\nimport math\n\n" + source_str
                     
         return {
             "description": description,
@@ -65,6 +65,9 @@ def get_all_templates(templates_dir: str = "../templates") -> dict:
         match = re.match(r"^\d+_(.+)\.ipynb$", filename)
         if match:
             task_id = match.group(1)
+            # Notebook filename aliases → judge task ids
+            aliases = {"multihead_attention": "mha"}
+            task_id = aliases.get(task_id, task_id)
             templates[task_id] = parse_notebook_template(filepath)
             
     return templates

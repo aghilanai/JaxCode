@@ -1,4 +1,4 @@
-# Publish torch-judge to PyPI when the package version changes on master, or manually.
+# Publish jax-judge to PyPI when the package version changes on master, or manually.
 #
 # Setup (choose one):
 #
@@ -11,7 +11,7 @@
 #    - Add repository secret PYPI_API_TOKEN (value = pypi-... from pypi.org)
 #    - The action will use TWINE_USERNAME=__token__ and TWINE_PASSWORD from secret.
 
-name: Publish torch-judge to PyPI
+name: Publish jax-judge to PyPI
 
 on:
   push:
@@ -20,7 +20,7 @@ on:
     paths:
       - "pyproject.toml"
       - "setup.py"
-      - "torch_judge/_version.py"
+      - "jax_judge/_version.py"
       - ".github/workflows/pypi-publish.yml"
   workflow_dispatch:
 
@@ -54,13 +54,13 @@ jobs:
           import re
           import subprocess
 
-          version_file = pathlib.Path("torch_judge/_version.py")
+          version_file = pathlib.Path("jax_judge/_version.py")
           version_re = re.compile(r'__version__\s*=\s*"([^"]+)"')
 
           def parse_version(text: str) -> str:
               match = version_re.search(text)
               if not match:
-                  raise SystemExit("Could not parse __version__ from torch_judge/_version.py")
+                  raise SystemExit("Could not parse __version__ from jax_judge/_version.py")
               return match.group(1)
 
           current = parse_version(version_file.read_text())
@@ -71,7 +71,7 @@ jobs:
           if not should_publish and before and before != "0000000000000000000000000000000000000000":
               try:
                   previous_text = subprocess.check_output(
-                      ["git", "show", f"{before}:torch_judge/_version.py"],
+                      ["git", "show", f"{before}:jax_judge/_version.py"],
                       text=True,
                   )
               except subprocess.CalledProcessError:

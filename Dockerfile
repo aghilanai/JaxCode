@@ -22,9 +22,9 @@ FROM build-base AS judge-builder
 
 WORKDIR /src
 
-# Build torch_judge wheel.
+# Build jax_judge wheel.
 COPY pyproject.toml setup.py README.md ./
-COPY torch_judge/ ./torch_judge/
+COPY jax_judge/ ./jax_judge/
 RUN python -m build --wheel --outdir /tmp/wheels .
 
 FROM build-base AS labext-builder
@@ -37,7 +37,7 @@ RUN jlpm install
 
 COPY labextension/style ./style
 COPY labextension/src ./src
-COPY labextension/torchcode_labext ./torchcode_labext
+COPY labextension/jaxcode_labext ./jaxcode_labext
 RUN jlpm run build:prod
 
 WORKDIR /src
@@ -54,7 +54,7 @@ COPY --from=judge-builder /tmp/wheels /tmp/wheels
 COPY --from=labext-builder /tmp/wheels /tmp/wheels
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
-      torch --index-url https://download.pytorch.org/whl/cpu && \
+      jax[cpu] flax optax && \
     pip install --no-cache-dir \
       /tmp/wheels/*.whl && \
     rm -rf /tmp/wheels

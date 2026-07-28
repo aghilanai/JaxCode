@@ -61,7 +61,7 @@ export default function Home() {
 
   useEffect(() => {
     // Load solved tasks from local storage
-    const savedSolved = localStorage.getItem('torchcode_solved_tasks');
+    const savedSolved = localStorage.getItem('jaxcode_solved_tasks');
     if (savedSolved) {
       try {
         setSolvedTasks(JSON.parse(savedSolved));
@@ -89,7 +89,7 @@ export default function Home() {
         .then(res => res.json())
         .then((data: TaskDetails) => {
           setTaskDetails(data);
-          const savedCode = localStorage.getItem(`torchcode_code_${selectedTaskId}`);
+          const savedCode = localStorage.getItem(`jaxcode_code_${selectedTaskId}`);
           setCode(savedCode !== null ? savedCode : data.initial_code);
           setResults(null);
           setActiveTab('problem');
@@ -117,7 +117,7 @@ export default function Home() {
       if (data.success) {
         setSolvedTasks(prev => {
           const updated = { ...prev, [selectedTaskId]: true };
-          localStorage.setItem('torchcode_solved_tasks', JSON.stringify(updated));
+          localStorage.setItem('jaxcode_solved_tasks', JSON.stringify(updated));
           return updated;
         });
       }
@@ -140,7 +140,7 @@ export default function Home() {
 
   const handleReset = () => {
     if (taskDetails && selectedTaskId) {
-      localStorage.removeItem(`torchcode_code_${selectedTaskId}`);
+      localStorage.removeItem(`jaxcode_code_${selectedTaskId}`);
       setCode(taskDetails.initial_code);
       setResults(null);
     }
@@ -152,7 +152,7 @@ export default function Home() {
       <nav className="flex items-center justify-between px-6 py-3 bg-[#2d2d2d] border-b border-[#404040]">
         <div className="flex items-center space-x-4">
           <span className="text-xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
-            TorchCode
+            JaxCode
           </span>
           <div className="h-6 w-px bg-gray-600 mx-2"></div>
           {/* Task Selector */}
@@ -316,7 +316,7 @@ export default function Home() {
               <div className="results-pane">
                 {isSubmitting ? (
                   <div className="flex items-center justify-center h-full text-gray-400">
-                    Executing PyTorch code...
+                    Executing JAX code...
                   </div>
                 ) : results ? (
                   <div className="space-y-6">
@@ -417,7 +417,7 @@ export default function Home() {
           <div className="h-full flex flex-col bg-[#1e1e1e]">
             <div className="flex items-center px-4 py-2 bg-[#252526] border-b border-[#404040] text-sm text-gray-400">
               <span className="font-medium text-gray-300 flex items-center">
-                <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Python (PyTorch)
+                <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Python (JAX)
               </span>
             </div>
             <div className="flex-1 pt-4">
@@ -430,7 +430,7 @@ export default function Home() {
                   const newCode = value || "";
                   setCode(newCode);
                   if (selectedTaskId) {
-                    localStorage.setItem(`torchcode_code_${selectedTaskId}`, newCode);
+                    localStorage.setItem(`jaxcode_code_${selectedTaskId}`, newCode);
                   }
                 }}
                 options={{

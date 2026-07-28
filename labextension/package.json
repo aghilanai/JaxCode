@@ -1,7 +1,7 @@
 {
-  "name": "torchcode-labext",
+  "name": "jaxcode-labext",
   "version": "0.1.0",
-  "description": "TorchCode JupyterLab Extension — Reset notebooks & Open in Colab",
+  "description": "JaxCode JupyterLab Extension — Reset notebooks & Open in Colab",
   "keywords": ["jupyter", "jupyterlab", "jupyterlab-extension"],
   "license": "MIT",
   "author": "duoan",
@@ -35,6 +35,6 @@
   },
   "jupyterlab": {
     "extension": true,
-    "outputDir": "torchcode_labext/labextension"
+    "outputDir": "jaxcode_labext/labextension"
   }
 }

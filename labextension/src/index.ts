@@ -12,28 +12,28 @@ const GITHUB_BRANCH = 'master';
 const TEMPLATES_BACKUP = '_original_templates';
 
 const colabIcon = new LabIcon({
-  name: 'torchcode:colab',
+  name: 'jaxcode:colab',
   svgstr: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path fill="#E8710A" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
   </svg>`
 });
 
 const runTestsIcon = new LabIcon({
-  name: 'torchcode:run-tests',
+  name: 'jaxcode:run-tests',
   svgstr: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
   </svg>`
 });
 
 const hintIcon = new LabIcon({
-  name: 'torchcode:hint',
+  name: 'jaxcode:hint',
   svgstr: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
   </svg>`
 });
 
 const statusIcon = new LabIcon({
-  name: 'torchcode:status',
+  name: 'jaxcode:status',
   svgstr: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M3 3v18h18"/><path d="M18 9V5"/><path d="M12 9V3"/><path d="M6 9V2"/>
   </svg>`
@@ -47,10 +47,11 @@ function getFilename(path: string): string {
 function getTaskIdFromPath(path: string): string | null {
   const base = getFilename(path);
   if (!base.endsWith('.ipynb')) return null;
-  const name = base.replace(/\.ipynb$/i, '');
+  const name = base.replace(/\.ipynb$/i, '').replace(/_solution$/i, '');
   if (name === '00_welcome') return null;
   const taskId = name.replace(/^\d+_/, '');
-  return taskId || null;
+  const aliases: Record<string, string> = { multihead_attention: 'mha' };
+  return aliases[taskId] || taskId || null;
 }
 
 function getGitHubDir(filename: string): string {
@@ -109,25 +110,25 @@ async function runExistingOrInsert(panel: NotebookPanel, code: string, pattern: 
   await NotebookActions.run(notebook, sessionContext);
 }
 
-const COMMAND_RESET = 'torchcode:reset-notebook';
-const COMMAND_COLAB = 'torchcode:open-in-colab';
-const COMMAND_RUN_TESTS = 'torchcode:run-tests';
-const COMMAND_HINT = 'torchcode:get-hint';
-const COMMAND_STATUS = 'torchcode:show-status';
+const COMMAND_RESET = 'jaxcode:reset-notebook';
+const COMMAND_COLAB = 'jaxcode:open-in-colab';
+const COMMAND_RUN_TESTS = 'jaxcode:run-tests';
+const COMMAND_HINT = 'jaxcode:get-hint';
+const COMMAND_STATUS = 'jaxcode:show-status';
 
 const plugin: JupyterFrontEndPlugin<void> = {
-  id: 'torchcode-labext:plugin',
+  id: 'jaxcode-labext:plugin',
   autoStart: true,
   requires: [INotebookTracker],
   activate: (app: JupyterFrontEnd, tracker: INotebookTracker) => {
-    console.log('TorchCode extension activated');
+    console.log('JaxCode extension activated');
 
     // Inject Google Fonts into the page
-    if (!document.querySelector('link[data-torchcode-fonts]')) {
+    if (!document.querySelector('link[data-jaxcode-fonts]')) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap';
-      link.setAttribute('data-torchcode-fonts', 'true');
+      link.setAttribute('data-jaxcode-fonts', 'true');
       document.head.appendChild(link);
     }
 
@@ -213,7 +214,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         }
         await runExistingOrInsert(
           current,
-          `from torch_judge import check\ncheck("${taskId}")`,
+          `from jax_judge import check\ncheck("${taskId}")`,
           `check("${taskId}")`
         );
       }
@@ -238,7 +239,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         }
         await runExistingOrInsert(
           current,
-          `from torch_judge import hint\nhint("${taskId}")`,
+          `from jax_judge import hint\nhint("${taskId}")`,
           `hint("${taskId}")`
         );
       }
@@ -253,7 +254,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         if (!current) return;
         await runExistingOrInsert(
           current,
-          'from torch_judge import status\nstatus()',
+          'from jax_judge import status\nstatus()',
           'status()'
         );
       }
@@ -278,45 +279,45 @@ const plugin: JupyterFrontEndPlugin<void> = {
           tooltip: 'Run judge tests (Ctrl+Shift+T)',
           label: 'Run Tests',
           onClick: () => app.commands.execute(COMMAND_RUN_TESTS),
-          className: 'torchcode-runtests-button'
+          className: 'jaxcode-runtests-button'
         });
-        panel.toolbar.addItem('torchcode-runtests', runTestsButton);
+        panel.toolbar.addItem('jaxcode-runtests', runTestsButton);
 
         const hintButton = new ToolbarButton({
           icon: hintIcon,
           tooltip: 'Get hint (Ctrl+Shift+H)',
           label: 'Hint',
           onClick: () => app.commands.execute(COMMAND_HINT),
-          className: 'torchcode-hint-button'
+          className: 'jaxcode-hint-button'
         });
-        panel.toolbar.addItem('torchcode-hint', hintButton);
+        panel.toolbar.addItem('jaxcode-hint', hintButton);
 
         const statusButton = new ToolbarButton({
           icon: statusIcon,
           tooltip: 'Show progress',
           label: 'Status',
           onClick: () => app.commands.execute(COMMAND_STATUS),
-          className: 'torchcode-status-button'
+          className: 'jaxcode-status-button'
         });
-        panel.toolbar.addItem('torchcode-status', statusButton);
+        panel.toolbar.addItem('jaxcode-status', statusButton);
 
         const colabButton = new ToolbarButton({
           icon: colabIcon,
           tooltip: 'Open in Google Colab',
           label: 'Colab',
           onClick: () => app.commands.execute(COMMAND_COLAB),
-          className: 'torchcode-colab-button'
+          className: 'jaxcode-colab-button'
         });
-        panel.toolbar.addItem('torchcode-colab', colabButton);
+        panel.toolbar.addItem('jaxcode-colab', colabButton);
 
         const resetButton = new ToolbarButton({
           icon: refreshIcon,
           tooltip: 'Reset notebook to template state',
           label: 'Reset',
           onClick: () => app.commands.execute(COMMAND_RESET),
-          className: 'torchcode-reset-button'
+          className: 'jaxcode-reset-button'
         });
-        panel.toolbar.addItem('torchcode-reset', resetButton);
+        panel.toolbar.addItem('jaxcode-reset', resetButton);
       }
     );
   }

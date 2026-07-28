@@ -39,7 +39,7 @@ run:
 		$(COMPOSE) up --build -d; \
 	fi
 	@echo ""
-	@echo "🔥 TorchCode is running!"
+	@echo "🔥 JaxCode is running!"
 	@echo "   Open http://localhost:8888"
 	@echo ""
 
@@ -47,7 +47,7 @@ run-build:
 	@echo "Using compose backend: $(COMPOSE)"
 	$(COMPOSE) up --build -d
 	@echo ""
-	@echo "🔥 TorchCode is running (local build)!"
+	@echo "🔥 JaxCode is running (local build)!"
 	@echo "   Open http://localhost:8888"
 	@echo ""
 

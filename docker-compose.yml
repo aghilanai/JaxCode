@@ -1,5 +1,5 @@
 services:
-  torchcode:
+  jaxcode:
     image: ghcr.io/duoan/torchcode:latest
     build: .
     user: root
@@ -9,6 +9,6 @@ services:
       - PORT=8888
     volumes:
       - ./notebooks:/app/notebooks
-      - ./torch_judge:/app/torch_judge
+      - ./jax_judge:/app/jax_judge
       - ./data:/app/data
     restart: unless-stopped

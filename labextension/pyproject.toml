@@ -3,9 +3,9 @@ requires = ["hatchling>=1.5.0", "jupyterlab>=4.0.0,<5", "hatch-jupyter-builder>=
 build-backend = "hatchling.build"
 
 [project]
-name = "torchcode_labext"
+name = "jaxcode_labext"
 version = "0.1.0"
-description = "TorchCode JupyterLab Extension — Reset notebooks & Open in Colab"
+description = "JaxCode JupyterLab Extension — Reset notebooks & Open in Colab"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 dependencies = ["jupyterlab>=4.0.0,<5"]
@@ -14,14 +14,14 @@ dependencies = ["jupyterlab>=4.0.0,<5"]
 exclude = [".github", "node_modules"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"torchcode_labext/labextension" = "share/jupyter/labextensions/torchcode-labext"
-"install.json" = "share/jupyter/labextensions/torchcode-labext/install.json"
+"jaxcode_labext/labextension" = "share/jupyter/labextensions/jaxcode-labext"
+"install.json" = "share/jupyter/labextensions/jaxcode-labext/install.json"
 
 [tool.hatch.build.hooks.jupyter-builder]
 dependencies = ["hatch-jupyter-builder>=0.5"]
 build-function = "hatch_jupyter_builder.npm_builder"
-ensured-targets = ["torchcode_labext/labextension/static/style.js"]
-skip-if-exists = ["torchcode_labext/labextension/static/style.js"]
+ensured-targets = ["jaxcode_labext/labextension/static/style.js"]
+skip-if-exists = ["jaxcode_labext/labextension/static/style.js"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
 build_cmd = "build:prod"

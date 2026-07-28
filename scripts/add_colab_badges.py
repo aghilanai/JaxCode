@@ -4,7 +4,7 @@
 import json
 from pathlib import Path
 
-REPO = "duoan/TorchCode"
+REPO = "duoan/JaxCode"
 BRANCH = "master"
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "templates"

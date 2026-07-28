@@ -1,5 +1,5 @@
 {
   "packageManager": "python",
-  "packageName": "torchcode_labext",
-  "uninstallInstructions": "Use pip to uninstall: pip uninstall torchcode_labext"
+  "packageName": "jaxcode_labext",
+  "uninstallInstructions": "Use pip to uninstall: pip uninstall jaxcode_labext"
 }
